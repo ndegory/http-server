@@ -1,0 +1,13 @@
+FROM alpine:3.5
+
+COPY main.go /go/src/github.com/ndegory/http-server/
+
+RUN apk update && apk upgrade && \
+    apk --virtual build-deps add go curl gcc musl-dev && \
+    export GOPATH=/go && \
+    cd $GOPATH/src/github.com/ndegory/http-server && \
+    go build -o httpd . && \
+    mv httpd / && \
+    apk del build-deps && cd / && rm -rf $GOPATH/ /var/cache/apk/*
+
+CMD ["/httpd"]
